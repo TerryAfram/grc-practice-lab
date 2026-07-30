@@ -1,0 +1,198 @@
+To build a modern, interactive index.html dashboard styled around Cloudflare's ecosystem (and tailored for your GRC framework architecture), you can use a clean, component-based single-file layout incorporating glassmorphism styling, dynamic filtering, and live metric widgets.
+Key Dashboard Features to Implement
+ * Dynamic Sidebar Navigation: Quick transitions between Overview, WAF & Security, Access Control, and Compliance Logs.
+ * Interactive Metric Cards: Stat containers showcasing real-time compliance scores, active edge rules, and blocked threats with trend indicators.
+ * Filterable Data Grids: Searchable and sortable event tables mimicking Cloudflare's Log Explorer.
+ * Visual Status Badges: Color-coded states for active policy enforcement vs. monitor-only configurations.
+Modern index.html Boilerplate
+Save the following code as your index.html inside your project directory:
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudflare GRC Edge Dashboard</title>
+    <!-- Tailwind CSS CDN for Modern Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        cloudflare: {
+                            orange: '#F38020',
+                            dark: '#18191A',
+                            card: '#242526',
+                            border: '#3A3B3C'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-cloudflare-dark text-gray-100 font-sans antialiased flex h-screen overflow-hidden">
+
+    <!-- Sidebar Navigation -->
+    <aside class="w-64 bg-[#1e1f20] border-r border-cloudflare-border flex flex-col justify-between hidden md:flex">
+        <div>
+            <!-- Branding -->
+            <div class="p-5 flex items-center space-x-3 border-b border-cloudflare-border">
+                <i class="fa-solid fa-shield-halved text-cloudflare-orange text-2xl"></i>
+                <span class="font-bold text-lg tracking-wide">CF-GRC <span class="text-xs px-2 py-0.5 bg-cloudflare-orange/20 text-cloudflare-orange rounded-full">Edge</span></span>
+            </div>
+            <!-- Menu Items -->
+            <nav class="p-4 space-y-1">
+                <a href="#" class="flex items-center space-x-3 px-4 py-2.5 rounded-lg bg-cloudflare-orange/10 text-cloudflare-orange font-medium">
+                    <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-200 transition">
+                    <i class="fa-solid fa-fire-wall"></i><span>WAF & Security</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-200 transition">
+                    <i class="fa-solid fa-id-card-clip"></i><span>Access Control</span>
+                </a>
+                <a href="#" class="flex items-center space-x-3 px-4 py-2.5 rounded-lg text-gray-400 hover:bg-white/5 hover:text-gray-200 transition">
+                    <i class="fa-solid fa-file-shield"></i><span>Compliance Logs</span>
+                </a>
+            </nav>
+        </div>
+        <!-- User Footprint -->
+        <div class="p-4 border-t border-cloudflare-border flex items-center space-x-3">
+            <div class="w-8 h-8 rounded-full bg-cloudflare-orange flex items-center justify-center font-bold text-white">TA</div>
+            <div class="overflow-hidden">
+                <p class="text-sm font-medium truncate">Auditor Workspace</p>
+                <p class="text-xs text-cloudflare-orange truncate">Active Session</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content Shell -->
+    <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
+        <!-- Top Header Bar -->
+        <header class="h-16 bg-[#1e1f20] border-b border-cloudflare-border flex items-center justify-between px-6">
+            <div class="flex items-center space-x-4">
+                <h1 class="text-lg font-semibold">Security Posture & Control Analytics</h1>
+                <span class="hidden sm:inline-block px-2.5 py-1 text-xs bg-emerald-500/10 text-emerald-400 rounded-full border border-emerald-500/20">
+                    <i class="fa-solid fa-circle text-[8px] mr-1.5"></i> Controls Active
+                </span>
+            </div>
+            <div class="flex items-center space-x-3">
+                <button onclick="refreshData()" class="px-3.5 py-1.5 bg-white/5 hover:bg-white/10 text-sm rounded-lg border border-cloudflare-border transition flex items-center space-x-2">
+                    <i class="fa-solid fa-rotate-right" id="refresh-icon"></i>
+                    <span>Sync State</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Viewport -->
+        <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-cloudflare-dark">
+
+            <!-- Metrics Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="bg-cloudflare-card p-5 rounded-xl border border-cloudflare-border">
+                    <p class="text-xs font-medium text-gray-400">Total Evaluated Controls</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <h3 class="text-2xl font-bold">142</h3>
+                        <span class="text-xs text-emerald-400 font-semibold">+4 this week</span>
+                    </div>
+                </div>
+                <div class="bg-cloudflare-card p-5 rounded-xl border border-cloudflare-border">
+                    <p class="text-xs font-medium text-gray-400">Mitigated Threat Events</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <h3 class="text-2xl font-bold">10,248</h3>
+                        <span class="text-xs text-cloudflare-orange font-semibold">99.8% Rate</span>
+                    </div>
+                </div>
+                <div class="bg-cloudflare-card p-5 rounded-xl border border-cloudflare-border">
+                    <p class="text-xs font-medium text-gray-400">Zero-Trust Log Latency</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <h3 class="text-2xl font-bold">14ms</h3>
+                        <span class="text-xs text-emerald-400 font-semibold">Optimal</span>
+                    </div>
+                </div>
+                <div class="bg-cloudflare-card p-5 rounded-xl border border-cloudflare-border">
+                    <p class="text-xs font-medium text-gray-400">Compliance Benchmark</p>
+                    <div class="flex items-baseline justify-between mt-2">
+                        <h3 class="text-2xl font-bold">ISO / NIST</h3>
+                        <span class="text-xs text-blue-400 font-semibold">Passed</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Log Explorer / Table Section -->
+            <div class="bg-cloudflare-card rounded-xl border border-cloudflare-border overflow-hidden">
+                <div class="p-4 border-b border-cloudflare-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <h2 class="font-semibold text-sm">Recent Edge Policy Events & Audit Logs</h2>
+                    <input type="text" id="logSearch" onkeyup="filterTable()" placeholder="Search resource IDs or rules..." 
+                        class="bg-cloudflare-dark text-sm px-3.5 py-1.5 rounded-lg border border-cloudflare-border focus:outline-none focus:border-cloudflare-orange w-full sm:w-64">
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm" id="auditTable">
+                        <thead class="bg-white/5 text-gray-400 text-xs uppercase">
+                            <tr>
+                                <th class="px-5 py-3">Timestamp</th>
+                                <th class="px-5 py-3">Rule / Vector</th>
+                                <th class="px-5 py-3">Source Region</th>
+                                <th class="px-5 py-3">Action Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-cloudflare-border">
+                            <tr class="hover:bg-white/[0.02] transition">
+                                <td class="px-5 py-3.5 font-mono text-xs text-gray-400">2026-07-30 14:20:10</td>
+                                <td class="px-5 py-3.5 font-medium">NIST-AC-2 (Privileged Audit)</td>
+                                <td class="px-5 py-3.5">US-East (IAD)</td>
+                                <td class="px-5 py-3.5"><span class="px-2 py-0.5 text-xs bg-emerald-500/10 text-emerald-400 rounded">Enforced</span></td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition">
+                                <td class="px-5 py-3.5 font-mono text-xs text-gray-400">2026-07-30 14:15:42</td>
+                                <td class="px-5 py-3.5 font-medium">ISO-27001 (Encryption Check)</td>
+                                <td class="px-5 py-3.5">EU-Central (FRA)</td>
+                                <td class="px-5 py-3.5"><span class="px-2 py-0.5 text-xs bg-emerald-500/10 text-emerald-400 rounded">Enforced</span></td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition">
+                                <td class="px-5 py-3.5 font-mono text-xs text-gray-400">2026-07-30 13:58:05</td>
+                                <td class="px-5 py-3.5 font-medium">WAF Anomaly Block (Bot Score)</td>
+                                <td class="px-5 py-3.5">AP-Southeast (SIN)</td>
+                                <td class="px-5 py-3.5"><span class="px-2 py-0.5 text-xs bg-cloudflare-orange/10 text-cloudflare-orange rounded">Mitigated</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Interactive JS Utilities -->
+    <script>
+        function refreshData() {
+            const icon = document.getElementById('refresh-icon');
+            icon.classList.add('animate-spin');
+            setTimeout(() => {
+                icon.classList.remove('animate-spin');
+            }, 800);
+        }
+
+        function filterTable() {
+            let input = document.getElementById('logSearch');
+            let filter = input.value.toLowerCase();
+            let table = document.getElementById('auditTable');
+            let tr = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < tr.length; i++) {
+                let td = tr[i].getElementsByTagName('td')[1];
+                if (td) {
+                    let txtValue = td.textContent || td.innerText;
+                    tr[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? "" : "none";
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+
