@@ -18,3 +18,8 @@ def get_metrics():
         "latency": "14ms",
         "benchmark": "ISO / NIST - Passed"
     }
+    
+@app.get("/")
+def read_root():
+    return {"message": "Welcome to the GRC Compliance API!"}
+
