@@ -1,18 +1,11 @@
-To build a modern, interactive index.html dashboard styled around Cloudflare's ecosystem (and tailored for your GRC framework architecture), you can use a clean, component-based single-file layout incorporating glassmorphism styling, dynamic filtering, and live metric widgets.
-Key Dashboard Features to Implement
- * Dynamic Sidebar Navigation: Quick transitions between Overview, WAF & Security, Access Control, and Compliance Logs.
- * Interactive Metric Cards: Stat containers showcasing real-time compliance scores, active edge rules, and blocked threats with trend indicators.
- * Filterable Data Grids: Searchable and sortable event tables mimicking Cloudflare's Log Explorer.
- * Visual Status Badges: Color-coded states for active policy enforcement vs. monitor-only configurations.
-Modern index.html Boilerplate
-Save the following code as your index.html inside your project directory:
-<!DOCTYPE html>
+export default {
+  async fetch(request) {
+    const html = `<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloudflare GRC Edge Dashboard</title>
-    <!-- Tailwind CSS CDN for Modern Styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -31,20 +24,16 @@ Save the following code as your index.html inside your project directory:
             }
         }
     </script>
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-cloudflare-dark text-gray-100 font-sans antialiased flex h-screen overflow-hidden">
 
-    <!-- Sidebar Navigation -->
     <aside class="w-64 bg-[#1e1f20] border-r border-cloudflare-border flex flex-col justify-between hidden md:flex">
         <div>
-            <!-- Branding -->
             <div class="p-5 flex items-center space-x-3 border-b border-cloudflare-border">
                 <i class="fa-solid fa-shield-halved text-cloudflare-orange text-2xl"></i>
                 <span class="font-bold text-lg tracking-wide">CF-GRC <span class="text-xs px-2 py-0.5 bg-cloudflare-orange/20 text-cloudflare-orange rounded-full">Edge</span></span>
             </div>
-            <!-- Menu Items -->
             <nav class="p-4 space-y-1">
                 <a href="#" class="flex items-center space-x-3 px-4 py-2.5 rounded-lg bg-cloudflare-orange/10 text-cloudflare-orange font-medium">
                     <i class="fa-solid fa-chart-pie"></i><span>Overview</span>
@@ -60,7 +49,6 @@ Save the following code as your index.html inside your project directory:
                 </a>
             </nav>
         </div>
-        <!-- User Footprint -->
         <div class="p-4 border-t border-cloudflare-border flex items-center space-x-3">
             <div class="w-8 h-8 rounded-full bg-cloudflare-orange flex items-center justify-center font-bold text-white">TA</div>
             <div class="overflow-hidden">
@@ -70,10 +58,7 @@ Save the following code as your index.html inside your project directory:
         </div>
     </aside>
 
-    <!-- Main Content Shell -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
-        <!-- Top Header Bar -->
         <header class="h-16 bg-[#1e1f20] border-b border-cloudflare-border flex items-center justify-between px-6">
             <div class="flex items-center space-x-4">
                 <h1 class="text-lg font-semibold">Security Posture & Control Analytics</h1>
@@ -89,10 +74,7 @@ Save the following code as your index.html inside your project directory:
             </div>
         </header>
 
-        <!-- Main Dashboard Viewport -->
         <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-cloudflare-dark">
-
-            <!-- Metrics Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-cloudflare-card p-5 rounded-xl border border-cloudflare-border">
                     <p class="text-xs font-medium text-gray-400">Total Evaluated Controls</p>
@@ -124,7 +106,6 @@ Save the following code as your index.html inside your project directory:
                 </div>
             </div>
 
-            <!-- Interactive Log Explorer / Table Section -->
             <div class="bg-cloudflare-card rounded-xl border border-cloudflare-border overflow-hidden">
                 <div class="p-4 border-b border-cloudflare-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <h2 class="font-semibold text-sm">Recent Edge Policy Events & Audit Logs</h2>
@@ -164,11 +145,9 @@ Save the following code as your index.html inside your project directory:
                     </table>
                 </div>
             </div>
-
         </main>
     </div>
 
-    <!-- Interactive JS Utilities -->
     <script>
         function refreshData() {
             const icon = document.getElementById('refresh-icon');
@@ -194,5 +173,12 @@ Save the following code as your index.html inside your project directory:
         }
     </script>
 </body>
-</html>
+</html>`;
 
+    return new Response(html, {
+      headers: {
+        "Content-Type": "text/html;charset=UTF-8",
+      },
+    });
+  },
+};
