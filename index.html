@@ -1,11 +1,10 @@
-export default {
-  async fetch(request) {
-    const html = `<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cloudflare GRC Edge Dashboard</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -24,10 +23,12 @@ export default {
             }
         }
     </script>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-cloudflare-dark text-gray-100 font-sans antialiased flex h-screen overflow-hidden">
 
+    <!-- Sidebar Navigation -->
     <aside class="w-64 bg-[#1e1f20] border-r border-cloudflare-border flex flex-col justify-between hidden md:flex">
         <div>
             <div class="p-5 flex items-center space-x-3 border-b border-cloudflare-border">
@@ -58,7 +59,9 @@ export default {
         </div>
     </aside>
 
+    <!-- Main Content Shell -->
     <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+        
         <header class="h-16 bg-[#1e1f20] border-b border-cloudflare-border flex items-center justify-between px-6">
             <div class="flex items-center space-x-4">
                 <h1 class="text-lg font-semibold">Security Posture & Control Analytics</h1>
@@ -75,6 +78,7 @@ export default {
         </header>
 
         <main class="flex-1 overflow-y-auto p-6 space-y-6 bg-cloudflare-dark">
+
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 <div class="bg-cloudflare-card p-5 rounded-xl border border-cloudflare-border">
                     <p class="text-xs font-medium text-gray-400">Total Evaluated Controls</p>
@@ -145,40 +149,11 @@ export default {
                     </table>
                 </div>
             </div>
+
         </main>
     </div>
 
-    <script>
-        function refreshData() {
-            const icon = document.getElementById('refresh-icon');
-            icon.classList.add('animate-spin');
-            setTimeout(() => {
-                icon.classList.remove('animate-spin');
-            }, 800);
-        }
-
-        function filterTable() {
-            let input = document.getElementById('logSearch');
-            let filter = input.value.toLowerCase();
-            let table = document.getElementById('auditTable');
-            let tr = table.getElementsByTagName('tr');
-
-            for (let i = 1; i < tr.length; i++) {
-                let td = tr[i].getElementsByTagName('td')[1];
-                if (td) {
-                    let txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toLowerCase().indexOf(filter) > -1 ? "" : "none";
-                }
-            }
-        }
-    </script>
+    <!-- External JavaScript Connection -->
+    <script src="index.js"></script>
 </body>
-</html>`;
-
-    return new Response(html, {
-      headers: {
-        "Content-Type": "text/html;charset=UTF-8",
-      },
-    });
-  },
-};
+</html>
