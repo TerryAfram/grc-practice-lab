@@ -1,13 +1,15 @@
+// Sync / Refresh Button Animation
 function refreshData() {
     const icon = document.getElementById('refresh-icon');
     if (!icon) return;
-    
+
     icon.classList.add('animate-spin');
     setTimeout(() => {
         icon.classList.remove('animate-spin');
     }, 800);
 }
 
+// Live Search Table Filter
 function filterTable() {
     const input = document.getElementById('logSearch');
     const table = document.getElementById('auditTable');
